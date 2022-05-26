@@ -1,9 +1,13 @@
-import React from "react";
-import "./App.css";
-import logo from "./logo.svg";
+import Board from "./components/Board";
+import { GlobalStyle } from "./styles/global";
 
 function App() {
-	return <div className="App"></div>;
+	return (
+		<div>
+			<GlobalStyle />
+			<Board />
+		</div>
+	);
 }
 
 export default App;
