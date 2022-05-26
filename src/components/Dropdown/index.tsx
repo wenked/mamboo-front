@@ -3,16 +3,21 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { useState } from "react";
+
+import { FormProps } from "../Modal";
 
 interface DropdownProps {
-	setStatus: React.Dispatch<React.SetStateAction<string>>;
-	status: string;
+	formData: undefined | FormProps;
+	setFormData: React.Dispatch<React.SetStateAction<FormProps>>;
 }
+type StatusType = "done" | "in progress" | "pending" | "testing";
 
-const Dropdown: React.FC<DropdownProps> = ({ setStatus, status }) => {
+const Dropdown: React.FC<DropdownProps> = ({ formData, setFormData }) => {
 	const handleChange = (event: SelectChangeEvent) => {
-		setStatus(event.target.value as string);
+		setFormData({
+			...formData,
+			status: event.target.value as StatusType,
+		});
 	};
 
 	return (
@@ -24,7 +29,7 @@ const Dropdown: React.FC<DropdownProps> = ({ setStatus, status }) => {
 					label="Status"
 					labelId="demo-simple-select-label"
 					onChange={handleChange}
-					value={status}
+					value={formData?.status}
 				>
 					<MenuItem value={"pending"}>pending</MenuItem>
 					<MenuItem value={"in progress"}>in progress</MenuItem>

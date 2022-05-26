@@ -1,10 +1,5 @@
+import { FormProps } from "../components/Modal";
 import api from "./api";
-
-interface InputTask {
-	description: string;
-	name: string;
-	status: "done" | "in progress" | "pending" | "testing";
-}
 
 interface UpdateInputTask {
 	_id: string;
@@ -17,7 +12,7 @@ interface GetInputTasks {
 	status?: "done" | "in progress" | "pending" | "testing";
 }
 
-export const createTaskService = async (input: InputTask) => {
+export const createTaskService = async (input: FormProps) => {
 	const { data } = await api.post("/create", input);
 	return data;
 };
