@@ -6,9 +6,10 @@ import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useMutation, useQueryClient } from "react-query";
-import { createTaskService } from "../../services/task.service";
+import { toast } from "react-toastify";
+import { createTaskService, updateTaskService } from "../../services/task.service";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Dropdown from "../Dropdown";
 import { Form } from "./styles";
 
@@ -26,6 +27,7 @@ const style = {
 
 interface MyModalProps {
 	open: boolean;
+	selectedItem: undefined | FormProps;
 	handleClose: () => void;
 }
 
@@ -36,22 +38,43 @@ export interface FormProps {
 	status?: "done" | "in progress" | "pending" | "testing";
 }
 
-const MyModal: React.FC<MyModalProps> = ({ handleClose, open }) => {
+export interface UpdateFormProps {
+	_id: string;
+	description?: string;
+	name?: string;
+	status?: "done" | "in progress" | "pending" | "testing";
+}
+
+const MyModal: React.FC<MyModalProps> = ({ handleClose, open, selectedItem }) => {
 	const [formData, setFormData] = useState<FormProps>({});
 	const queryClient = useQueryClient();
 
 	const createTask = useMutation(createTaskService);
+	const editTask = useMutation(updateTaskService);
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		try {
-			const data = await createTask.mutate(formData, {
-				onSuccess: () => queryClient.invalidateQueries("tasks"),
-			});
+			if (selectedItem && formData) {
+				await editTask.mutateAsync(formData as UpdateFormProps, {
+					onSuccess: () => {
+						queryClient.invalidateQueries("tasks");
+						toast.success("Task created successfully");
+					},
+				});
+			} else {
+				await createTask.mutateAsync(formData, {
+					onSuccess: () => {
+						queryClient.invalidateQueries("tasks");
+						toast.success("Task created successfully");
+					},
+				});
+			}
 
 			handleClose();
 			setFormData({});
 		} catch (error) {
+			toast.error("Something went wrong");
 			console.log(error);
 		}
 	};
@@ -61,6 +84,12 @@ const MyModal: React.FC<MyModalProps> = ({ handleClose, open }) => {
 
 		setFormData({ ...formData, [name]: value });
 	}
+
+	useEffect(() => {
+		if (selectedItem) {
+			setFormData(selectedItem);
+		}
+	}, [selectedItem]);
 
 	return (
 		<div>
@@ -108,9 +137,28 @@ const MyModal: React.FC<MyModalProps> = ({ handleClose, open }) => {
 								onChange={handleFormChange}
 								value={formData?.description}
 							/>
-							<Button type="submit" variant="outlined">
-								Save
-							</Button>
+							<Box
+								sx={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "flex-end",
+									gap: "1rem",
+									width: "100%",
+								}}
+							>
+								<Button sx={{ width: 100 }} type="submit" variant="outlined">
+									Save
+								</Button>
+								<Button
+									color="secondary"
+									onClick={handleClose}
+									sx={{ width: 100 }}
+									type="button"
+									variant="outlined"
+								>
+									Cancel
+								</Button>
+							</Box>
 						</Form>
 					</Box>
 				</Fade>

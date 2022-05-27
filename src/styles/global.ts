@@ -12,6 +12,6 @@ export const GlobalStyle = createGlobalStyle`
   html, body, #root {
     min-height: 100vh;
     box-sizing: border-box;
-    
+  
   }
 `;

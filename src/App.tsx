@@ -1,4 +1,6 @@
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Board from "./components/Board";
 import { GlobalStyle } from "./styles/global";
 
@@ -10,6 +12,7 @@ function App() {
 			<div>
 				<GlobalStyle />
 				<Board />
+				<ToastContainer />
 			</div>
 		</QueryClientProvider>
 	);
