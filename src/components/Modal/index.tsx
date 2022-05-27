@@ -121,7 +121,11 @@ const MyModal: React.FC<MyModalProps> = ({ handleClose, open, selectedItem }) =>
 							>
 								<TextField
 									fullWidth
+									helperText={`${formData?.name?.length || 0}/${40}`}
 									id="outlined-name"
+									inputProps={{
+										maxlength: 40,
+									}}
 									label="Task name"
 									name="name"
 									onChange={handleFormChange}
@@ -131,7 +135,11 @@ const MyModal: React.FC<MyModalProps> = ({ handleClose, open, selectedItem }) =>
 							</Box>
 							<TextField
 								fullWidth
+								helperText={`${formData?.description?.length || 0}/${60}`}
 								id="outlined-name"
+								inputProps={{
+									maxlength: 60,
+								}}
 								label="Description"
 								name="description"
 								onChange={handleFormChange}
