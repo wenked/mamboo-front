@@ -59,7 +59,7 @@ const MyModal: React.FC<MyModalProps> = ({ handleClose, open, selectedItem }) =>
 				await editTask.mutateAsync(formData as UpdateFormProps, {
 					onSuccess: () => {
 						queryClient.invalidateQueries("tasks");
-						toast.success("Task created successfully");
+						toast.success("Task edited successfully");
 					},
 				});
 			} else {
@@ -101,7 +101,10 @@ const MyModal: React.FC<MyModalProps> = ({ handleClose, open, selectedItem }) =>
 				aria-describedby="transition-modal-description"
 				aria-labelledby="transition-modal-title"
 				closeAfterTransition
-				onClose={handleClose}
+				onClose={() => {
+					handleClose();
+					setFormData({});
+				}}
 				open={open}
 			>
 				<Fade in={open}>
@@ -135,14 +138,16 @@ const MyModal: React.FC<MyModalProps> = ({ handleClose, open, selectedItem }) =>
 							</Box>
 							<TextField
 								fullWidth
-								helperText={`${formData?.description?.length || 0}/${60}`}
+								helperText={`${formData?.description?.length || 0}/${200}`}
 								id="outlined-name"
 								inputProps={{
-									maxlength: 60,
+									maxlength: 200,
 								}}
 								label="Description"
+								multiline
 								name="description"
 								onChange={handleFormChange}
+								rows={4}
 								value={formData?.description}
 							/>
 							<Box
@@ -159,7 +164,10 @@ const MyModal: React.FC<MyModalProps> = ({ handleClose, open, selectedItem }) =>
 								</Button>
 								<Button
 									color="secondary"
-									onClick={handleClose}
+									onClick={() => {
+										handleClose();
+										setFormData({});
+									}}
 									sx={{ width: 100 }}
 									type="button"
 									variant="outlined"

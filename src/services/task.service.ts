@@ -9,7 +9,7 @@ interface UpdateInputTask {
 }
 
 interface GetInputTasks {
-	status?: "done" | "in progress" | "pending" | "testing";
+	status?: string;
 }
 
 export const createTaskService = async (input: FormProps) => {

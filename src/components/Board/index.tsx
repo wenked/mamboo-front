@@ -7,6 +7,7 @@ import { useQuery } from "react-query";
 import { toast } from "react-toastify";
 import { getTasksService, updateTaskService } from "../../services/task.service";
 import Column from "../Column";
+import Dropdown from "../Dropdown";
 import { FormProps } from "../Modal";
 import MyModal from "../Modal";
 import { BoardContainer } from "./styles";
@@ -14,26 +15,33 @@ import myColumns from "./utils/boardColumns";
 
 const Board: React.FC = () => {
 	const [open, setOpen] = useState(false);
-
+	const [query, setQuery] = useState("all");
 	const [columns, setColumns] = useState(myColumns);
 	const [selectedItem, setSelectedItem] = useState<FormProps>();
 	const updateTask = useMutation(updateTaskService);
-	const { isError } = useQuery<FormProps[], Error>(["tasks"], () => getTasksService({}), {
-		onSuccess: (data) => {
-			const newColumns = { ...columns };
-			const pendingTasks = data.filter((task) => task.status === "pending");
-			const inProgressTasks = data.filter((task) => task.status === "in progress");
-			const testingTasks = data.filter((task) => task.status === "testing");
-			const doneTasks = data.filter((task) => task.status === "done");
-			newColumns.pending.items = pendingTasks;
-			newColumns["in progress"].items = inProgressTasks;
-			newColumns.testing.items = testingTasks;
-			newColumns.done.items = doneTasks;
-			setColumns(newColumns);
-		},
-	});
+	const { isError } = useQuery<FormProps[], Error>(
+		["tasks", query],
+		() => getTasksService(query !== "all" ? { status: query } : {}),
+		{
+			onSuccess: (data) => {
+				const newColumns = { ...columns };
+				const pendingTasks = data.filter((task) => task.status === "pending");
+				const inProgressTasks = data.filter((task) => task.status === "in progress");
+				const testingTasks = data.filter((task) => task.status === "testing");
+				const doneTasks = data.filter((task) => task.status === "done");
+				newColumns.pending.items = pendingTasks;
+				newColumns["in progress"].items = inProgressTasks;
+				newColumns.testing.items = testingTasks;
+				newColumns.done.items = doneTasks;
+				setColumns(newColumns);
+			},
+		}
+	);
 	const handleOpen = () => setOpen(true);
-	const handleClose = () => setOpen(false);
+	const handleClose = () => {
+		setOpen(false);
+		setSelectedItem(undefined);
+	};
 
 	const handleEdit = (item: FormProps) => {
 		setSelectedItem(item);
@@ -86,10 +94,14 @@ const Board: React.FC = () => {
 
 	return (
 		<BoardContainer>
-			<h1>My Board</h1>
-			<Button onClick={handleOpen} startIcon={<Add />} variant="outlined">
-				Create task
-			</Button>
+			<h1>Tasks</h1>
+			<section>
+				<Button onClick={handleOpen} startIcon={<Add />} variant="outlined">
+					Create task
+				</Button>
+
+				<Dropdown filter setValue={setQuery} value={query} />
+			</section>
 			<section>
 				<DragDropContext onDragEnd={(result) => onDragEnd(result, columns)}>
 					{Object.entries(columns).map(([id, column]) => {

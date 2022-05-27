@@ -17,7 +17,7 @@ const getChipColor = (status: undefined | string): colors => {
 		case "pending":
 			return "warning";
 		case "testing":
-			return "primary";
+			return "secondary";
 		default:
 			return "default";
 	}

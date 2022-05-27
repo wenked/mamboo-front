@@ -14,6 +14,10 @@ export const BoardContainer = styled.div`
 		padding: 2px;
 	}
 
+	div > h1 {
+		font-weight: 400;
+	}
+
 	section {
 		display: flex;
 		flex-direction: row;

@@ -7,17 +7,24 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { FormProps } from "../Modal";
 
 interface DropdownProps {
-	formData: undefined | FormProps;
-	setFormData: React.Dispatch<React.SetStateAction<FormProps>>;
+	filter?: boolean;
+	formData?: undefined | FormProps;
+	setFormData?: React.Dispatch<React.SetStateAction<FormProps>>;
+	setValue?: React.Dispatch<React.SetStateAction<string>>;
+	value?: string;
 }
 type StatusType = "done" | "in progress" | "pending" | "testing";
 
-const Dropdown: React.FC<DropdownProps> = ({ formData, setFormData }) => {
+const Dropdown: React.FC<DropdownProps> = ({ filter, formData, setFormData, setValue, value }) => {
 	const handleChange = (event: SelectChangeEvent) => {
-		setFormData({
-			...formData,
-			status: event.target.value as StatusType,
-		});
+		if (filter && setValue) {
+			setValue(event.target.value);
+		} else if (setFormData) {
+			setFormData({
+				...formData,
+				status: event.target.value as StatusType,
+			});
+		}
 	};
 
 	return (
@@ -25,12 +32,14 @@ const Dropdown: React.FC<DropdownProps> = ({ formData, setFormData }) => {
 			<FormControl fullWidth>
 				<InputLabel id="demo-simple-select-label">Status</InputLabel>
 				<Select
+					fullWidth
 					id="demo-simple-select"
 					label="Status"
 					labelId="demo-simple-select-label"
 					onChange={handleChange}
-					value={formData?.status}
+					value={filter ? value : formData?.status}
 				>
+					{filter && <MenuItem value={"all"}>all</MenuItem>}
 					<MenuItem value={"pending"}>pending</MenuItem>
 					<MenuItem value={"in progress"}>in progress</MenuItem>
 					<MenuItem value={"testing"}>testing</MenuItem>
