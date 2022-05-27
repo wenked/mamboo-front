@@ -7,4 +7,10 @@ export const BoardContainer = styled.div`
 	align-items: center;
 	justify-content: center;
 	gap: 1rem;
+
+	section {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+	}
 `;

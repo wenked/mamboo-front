@@ -5,18 +5,12 @@ import Fade from "@mui/material/Fade";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { createTaskService } from "../../services/task.service";
 
-import MuiAlert, { AlertProps } from "@mui/material/Alert";
-import Snackbar from "@mui/material/Snackbar";
-import { forwardRef, useState } from "react";
+import { useState } from "react";
 import Dropdown from "../Dropdown";
 import { Form } from "./styles";
-
-const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
-	return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
 
 const style = {
 	bgcolor: "background.paper",
@@ -44,27 +38,17 @@ export interface FormProps {
 
 const MyModal: React.FC<MyModalProps> = ({ handleClose, open }) => {
 	const [formData, setFormData] = useState<FormProps>({});
-	const [open, setOpen] = useState(false);
-	const handleClick = () => {
-		setOpen(true);
-	};
-
-	const handleClose = (event?: Event | React.SyntheticEvent, reason?: string) => {
-		if (reason === "clickaway") {
-			return;
-		}
-
-		setOpen(false);
-	};
+	const queryClient = useQueryClient();
 
 	const createTask = useMutation(createTaskService);
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		try {
-			console.log(new FormData(event.currentTarget));
-			const data = await createTask.mutate(formData);
-			console.log(data, "koe");
+			const data = await createTask.mutate(formData, {
+				onSuccess: () => queryClient.invalidateQueries("tasks"),
+			});
+
 			handleClose();
 			setFormData({});
 		} catch (error) {
@@ -93,17 +77,6 @@ const MyModal: React.FC<MyModalProps> = ({ handleClose, open }) => {
 			>
 				<Fade in={open}>
 					<Box sx={style}>
-						<Snackbar
-							anchorOrigin={{ vertical: "top", horizontal: "left" }}
-							autoHideDuration={6000}
-							key={"top,left"}
-							onClose={handleClose}
-							open={open}
-						>
-							<Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-								This is a success message!
-							</Alert>
-						</Snackbar>
 						<Form onSubmit={handleSubmit}>
 							<Typography component="h2" id="transition-modal-title" variant="h6">
 								Create Task
