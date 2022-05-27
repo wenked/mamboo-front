@@ -3,7 +3,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-
+import { useEffect } from "react";
 import { FormProps } from "../Modal";
 
 interface DropdownProps {
@@ -31,13 +31,14 @@ const Dropdown: React.FC<DropdownProps> = ({ filter, formData, setFormData, setV
 		<Box sx={{ minWidth: 120 }}>
 			<FormControl fullWidth>
 				<InputLabel id="demo-simple-select-label">Status</InputLabel>
+
 				<Select
 					fullWidth
 					id="demo-simple-select"
 					label="Status"
 					labelId="demo-simple-select-label"
 					onChange={handleChange}
-					value={filter ? value : formData?.status}
+					value={filter ? value : formData?.status ? formData.status : ""}
 				>
 					{filter && <MenuItem value={"all"}>all</MenuItem>}
 					<MenuItem value={"pending"}>pending</MenuItem>

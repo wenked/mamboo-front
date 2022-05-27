@@ -12,6 +12,7 @@ export const ColumnContainer = styled.div<ColumnContainerProps>`
 	overflow-y: auto;
 	border-radius: 10px;
 	scrollbar-width: thin;
+	border: 1px solid #0d3d56;
 
 	&::-webkit-scrollbar {
 		width: 11px;
